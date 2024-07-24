@@ -1,0 +1,24 @@
+services:
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:latest # Use the latest WireGuard image from LinuxServer
+    container_name: wireguard # Name the container "wireguard"
+    cap_add:
+      - NET_ADMIN # Add NET_ADMIN capability for network administration
+      - SYS_MODULE # Add SYS_MODULE capability for module loading
+    environment:
+      - PUID=1000 # Set user ID for permissions
+      - PGID=1000 # Set group ID for permissions
+      - TZ=Asia/Kolkata # Set timezone
+      - SERVERURL=<DOMAIN_NAME> # Domain name pointing to Cloudflare
+      - SERVERPORT=51820 # Optional: Set server port (default 51820)
+      - PEERS=peer1,peer2 # Optional: Define peers
+      - PEERDNS=1.1.1.2,1.0.0.2 # Use Cloudflare DNS servers
+      - ALLOWEDIPS=0.0.0.0/0 # Allow all IPs
+    volumes:
+      - /path/to/config:/config # Mount config directory
+      - /lib/modules:/lib/modules # Optional: Mount modules directory
+    ports:
+      - 51820:51820/udp # Map UDP port 51820
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1 # Required sysctl setting
+    restart: unless-stopped # Restart the container unless it is stopped manually
