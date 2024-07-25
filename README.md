@@ -91,7 +91,7 @@ sudo chmod +x /usr/local/bin/docker-compose
     fi
 </code></pre>
 
-<h2>2. To ensure your Cloudflare DNS records are updated periodically, add a cron job:</h2>
+<h3>2. To ensure your Cloudflare DNS records are updated periodically, add a cron job:</h3>
 <pre><code>crontab -e</code></pre>
 <p>Add the following line to run the script every 2 minutes:</p>
 <pre><code>*/2 * * * * /path/to/cloudflare_ddns_update.sh</code></pre>
