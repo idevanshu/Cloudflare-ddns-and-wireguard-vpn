@@ -63,33 +63,32 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 <h4>Run this: <code>nano cloudflare_ddns_update.sh</code></h4>
 <h4>Paste the following code into the file:</h4>
-<pre><code>
-    ZONE_ID="ZONE_ID"
-    ACCOUNT_ID="ACCOUNT_ID"
-    AUTH_EMAIL="AUTH_EMAIL"
-    AUTH_KEY="Api_Key"
-    RECORD_NAME="myhome.example.com"// # your domain name
+<pre><code>ZONE_ID="ZONE_ID"
+ACCOUNT_ID="ACCOUNT_ID"
+AUTH_EMAIL="AUTH_EMAIL"
+AUTH_KEY="Api_Key"
+RECORD_NAME="myhome.example.com"// # your domain name
 
-    CURRENT_IP=$(curl -s http://ipv4.icanhazip.com)
+CURRENT_IP=$(curl -s http://ipv4.icanhazip.com)
 
-    RECORD_ID=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records?name=$RECORD_NAME" \
+RECORD_ID=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records?name=$RECORD_NAME" \
+    -H "X-Auth-Email: $AUTH_EMAIL" \
+    -H "X-Auth-Key: $AUTH_KEY" \
+    -H "Content-Type: application/json" | jq -r '.result[0].id')
+
+DNS_IP=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records/$RECORD_ID" \
+    -H "X-Auth-Email: $AUTH_EMAIL" \
+    -H "X-Auth-Key: $AUTH_KEY" \
+    -H "Content-Type: application/json" | jq -r '.result.content')
+
+if [ "$CURRENT_IP" != "$DNS_IP" ]; then
+    curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records/$RECORD_ID" \
         -H "X-Auth-Email: $AUTH_EMAIL" \
         -H "X-Auth-Key: $AUTH_KEY" \
-        -H "Content-Type: application/json" | jq -r '.result[0].id')
-
-    DNS_IP=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records/$RECORD_ID" \
-        -H "X-Auth-Email: $AUTH_EMAIL" \
-        -H "X-Auth-Key: $AUTH_KEY" \
-        -H "Content-Type: application/json" | jq -r '.result.content')
-
-    if [ "$CURRENT_IP" != "$DNS_IP" ]; then
-        curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records/$RECORD_ID" \
-            -H "X-Auth-Email: $AUTH_EMAIL" \
-            -H "X-Auth-Key: $AUTH_KEY" \
-            -H "Content-Type: application/json" \
-            --data "{\"type\":\"A\",\"name\":\"$RECORD_NAME\",\"content\":\"$CURRENT_IP\",\"ttl\":120,\"proxied\":false}" \
-            | jq
-    fi
+        -H "Content-Type: application/json" \
+        --data "{\"type\":\"A\",\"name\":\"$RECORD_NAME\",\"content\":\"$CURRENT_IP\",\"ttl\":120,\"proxied\":false}" \
+        | jq
+fi
 </code></pre>
 
 <h3>2. To ensure your Cloudflare DNS records are updated periodically, add a cron job:</h3>
