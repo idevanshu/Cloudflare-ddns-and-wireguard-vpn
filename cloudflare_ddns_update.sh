@@ -7,11 +7,11 @@
 # - AUTH_EMAIL: The email associated with your Cloudflare account
 # - AUTH_KEY: Go to your profile -> API Tokens -> Global API Key (or create a new API token)
 
-ZONE_ID=${ZONE_ID}
-ACCOUNT_ID=${ACCOUNT_ID}
-AUTH_EMAIL=${AUTH_EMAIL}
-AUTH_KEY=${AUTH_KEY}
-RECORD_NAME="example.com"// # your domain name
+ZONE_ID="ZONE_ID"
+ACCOUNT_ID="ACCOUNT_ID"
+AUTH_EMAIL="AUTH_EMAIL"
+AUTH_KEY="Api_Key"
+RECORD_NAME="myhome.example.com"// # your domain name
 
 # Get the current public IP address
 CURRENT_IP=$(curl -s http://ipv4.icanhazip.com)
