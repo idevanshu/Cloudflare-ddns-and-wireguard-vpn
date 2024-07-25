@@ -70,22 +70,18 @@ AUTH_EMAIL="AUTH_EMAIL"
 AUTH_KEY="Api_Key"
 RECORD_NAME="myhome.example.com"// # your domain name
 
-# Get the current public IP address
 CURRENT_IP=$(curl -s http://ipv4.icanhazip.com)
 
-# Get the DNS record ID
 RECORD_ID=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records?name=$RECORD_NAME" \
     -H "X-Auth-Email: $AUTH_EMAIL" \
     -H "X-Auth-Key: $AUTH_KEY" \
     -H "Content-Type: application/json" | jq -r '.result[0].id')
 
-# Get the current DNS record's IP address
 DNS_IP=$(curl -s -X GET "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records/$RECORD_ID" \
     -H "X-Auth-Email: $AUTH_EMAIL" \
     -H "X-Auth-Key: $AUTH_KEY" \
     -H "Content-Type: application/json" | jq -r '.result.content')
 
-# Update the DNS record if the IP has changed
 if [ "$CURRENT_IP" != "$DNS_IP" ]; then
     curl -s -X PUT "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/dns_records/$RECORD_ID" \
         -H "X-Auth-Email: $AUTH_EMAIL" \
