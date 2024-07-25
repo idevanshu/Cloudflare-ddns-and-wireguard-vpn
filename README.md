@@ -63,7 +63,8 @@ sudo chmod +x /usr/local/bin/docker-compose
 
 <h4>Run this: <code>nano cloudflare_ddns_update.sh</code></h4>
 <h4>Paste the following code into the file:</h4>
-<pre><code>ZONE_ID="ZONE_ID"
+<pre><code>
+    ZONE_ID="ZONE_ID"
     ACCOUNT_ID="ACCOUNT_ID"
     AUTH_EMAIL="AUTH_EMAIL"
     AUTH_KEY="Api_Key"
